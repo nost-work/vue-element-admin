@@ -86,10 +86,9 @@ export const constantRoutes = [
   {
     path: '/demo',
     component: Layout,
-    redirect: '/demo',
     children: [
       {
-        path: 'demo',
+        path: '',
         component: () => import('@/views/demo/index'),
         name: 'Demo',
         meta: { title: 'デモ用', icon: 'el-icon-eleme', affix: true }
