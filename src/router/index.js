@@ -84,7 +84,7 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/',
+    path: '/demo',
     component: Layout,
     redirect: '/demo',
     children: [
