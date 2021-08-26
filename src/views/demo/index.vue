@@ -19,15 +19,6 @@
         <template slot-scope="{ row }">
           <template v-if="row.edit">
             <el-input v-model="row.title" class="edit-input" size="small" />
-            <el-button
-              class="cancel-btn"
-              size="small"
-              icon="el-icon-refresh"
-              type="warning"
-              @click="cancelEdit(row)"
-            >
-              キャンセルする
-            </el-button>
           </template>
           <span v-else>{{ row.title }}</span>
         </template>
@@ -36,21 +27,12 @@
         <template slot-scope="{ row }">
           <template v-if="row.edit">
             <el-input v-model="row.body" class="edit-input" size="small" />
-            <el-button
-              class="cancel-btn"
-              size="small"
-              icon="el-icon-refresh"
-              type="warning"
-              @click="cancelEdit(row)"
-            >
-              キャンセルする
-            </el-button>
           </template>
           <span v-else>{{ row.body }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="アクション" width="120">
+      <el-table-column align="center" label="アクション" width="250">
         <template slot-scope="{ row }">
           <el-button
             v-if="row.edit"
@@ -59,17 +41,36 @@
             icon="el-icon-circle-check-outline"
             @click="confirmEdit(row)"
           >
-            OK
+            保存
           </el-button>
           <el-button
-            v-else
-            type="primary"
+            v-if="row.edit"
+            class="cancel-btn"
             size="small"
-            icon="el-icon-edit"
-            @click="row.edit = !row.edit"
+            icon="el-icon-refresh"
+            type="warning"
+            @click="cancelEdit(row)"
           >
-            編集する
+            キャンセル
           </el-button>
+          <div v-else class="">
+            <el-button
+              type="primary"
+              size="small"
+              icon="el-icon-edit"
+              @click="row.edit = !row.edit"
+            >
+              編集
+            </el-button>
+            <el-button
+              type="danger"
+              size="small"
+              icon="el-icon-delete"
+              @click="deleteData(row)"
+            >
+              削除
+            </el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -122,7 +123,6 @@ export default {
       })
   },
   methods: {
-
     cancelEdit(row) {
       row.title = row.original.title
       row.body = row.original.body
@@ -133,20 +133,34 @@ export default {
       })
     },
     confirmEdit(row) {
-      const edit = {
+      const data = {
         title: row.title,
         body: row.body
       }
       row.edit = false
-      axios.put(`${apiUrl}/${row.id}`, {
-        headers: postHeaders,
-        data: edit
-      }).then((res) => {
-        console.log(res)
-      })
+      axios
+        .patch(`${apiUrl}/${row.id}`, data, {
+          headers: postHeaders
+        })
+        .then(res => {
+          console.log(res)
+        })
       this.$message({
         message: '編集しました。',
         type: 'success'
+      })
+    },
+    deleteData(row) {
+      axios
+        .delete(`${apiUrl}/${row.id}`, {
+          headers: postHeaders
+        })
+        .then(res => {
+          console.log(res)
+        })
+      this.$message({
+        message: '削除しました。',
+        type: 'danger'
       })
     }
   }
